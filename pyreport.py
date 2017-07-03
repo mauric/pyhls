@@ -74,20 +74,28 @@ values3 = [int(s) for s in info3.split() if s.isdigit()]
 values_dict3 = dict(bram=values3[0], dsp=values3[1],ff=values3[2], lut=values3[3], bitwidth=bw3)
 
 
-## Plot.
-# Rsc used
-#f = plt.bar(range(len(all_values)), all_values.values(), align='center')
-#plt.xticks(range(len(all_values)), all_values.keys())
-
+## Plot charts.
+plt.figure(1)
 plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["bram"], values_dict2["bram"], values_dict3["bram"]],'ro' )
+plt.xlabel("X label)
+plt.ylabel("Y label)
 
 
+plt.figure(2)
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["dsp"], values_dict2["dsp"], values_dict3["dsp"]],'ro' )
+plt.xlabel("X label)
+plt.ylabel("Y label)
 
 
-
+plt.figure(3)
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["ff"], values_dict2["ff"], values_dict3["ff"]],'ro' )
+plt.xlabel("X label)
+plt.ylabel("Y label)
 
 # Show plots
 plt.show()
+#f = plt.bar(range(len(all_values)), all_values.values(), align='center')
+#plt.xticks(range(len(all_values)), all_values.keys())
 
 
 # Rsc Utilization %
