@@ -8,7 +8,6 @@
 import matplotlib.pyplot as plt
 
 
-
 titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"} 
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
 keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
@@ -16,15 +15,18 @@ keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
 fields_col = [] # To store all the fields in columns and ranks
 fields_rank = [] #
 
+
+# List file names.
 fileName1 = "file1.rpt" 
 fileName2 = "file2.rpt"
-
+filename3 = "file3.rpt"
 
 ## Open files.
 f1 = open(fileName1, 'r')
 print f1
 f2 = open(fileName2, 'r')
 print f2
+f3 = open(fileName3, 'r')
 
 # Print a Table of Content of report
 print ("Table of Content")
@@ -65,11 +67,24 @@ print (values)
 print (values_percente_rsc_dict)
 
 ## Plot.
-plt.bar(range(len(values_dict)), values_dict.values(), align='center')
+# Rsc used
+f = plt.bar(range(len(values_dict)), values_dict.values(), align='center')
 plt.xticks(range(len(values_dict)), values_dict.keys())
+plt.plot()
 
+# Rsc Avail
+plt.figure()
+g = plt.bar(range(len(values_rsc_dict)), values_rsc_dict.values(), align='center')
+plt.xticks(range(len(values_rsc_dict)), values_rsc_dict.keys())
+plt.plot()
+
+# Show plots
 plt.show()
 
+
+
+
+# Rsc Utilization %
 
 ## Close files.
 f1.close()
