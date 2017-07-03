@@ -26,6 +26,8 @@ print f1
 f2 = open(fileName2, 'r')
 print f2
 
+# Print a Table of Content of report
+print ("Table of Content")
 for line in f1:
     if line.startswith("=========="):
         print ("Title here")
@@ -39,13 +41,30 @@ f1.seek(0)
 listf = f1.readlines()  
 
 
-# Extract some dummy information to test string methods
-index = listf[72].rfind("Utilization Estimates")
+## Extract some dummy information to test string methods.
+# Total  resources used
+index = listf[58].rfind("Utilization Estimates")
 info = (listf[72].rstrip()).replace("|", "")
 values = [int(s) for s in info.split() if s.isdigit()]
 values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
 print (values)
 print (values_dict)
+
+# Available Resouces
+info = (listf[74].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_rsc_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
+print (values)
+print (values_rsc_dict)
+
+# Utilisation
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_percente_rsc_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
+print (values)
+print (values_percente_rsc_dict)
+
+
 
 ## Close files.
 f1.close()
