@@ -19,7 +19,7 @@ fields_rank = [] #
 # List file names.
 fileName1 = "file1.rpt" 
 fileName2 = "file2.rpt"
-filename3 = "file3.rpt"
+fileName3 = "file3.rpt"
 
 ## Open files.
 f1 = open(fileName1, 'r')
@@ -41,47 +41,40 @@ for line in f1:
 # Rewind file and store
 f1.seek(0)
 listf = f1.readlines()  
-
+listf2 = f2.readlines()
+listf3 = f3.readlines()
 
 ## Extract some dummy information to test string methods.
 # Total  resources used
-index = listf[58].rfind("Utilization Estimates")
 info = (listf[72].rstrip()).replace("|", "")
-values = [int(s) for s in info.split() if s.isdigit()]
-values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
-print (values)
-print (values_dict)
+info2 = (listf2[72].rstrip()).replace("|", "")
+info3 = (listf3[72].rstrip()).replace("|", "")
 
-# Available Resouces
-info = (listf[74].rstrip()).replace("|", "")
-values = [int(s) for s in info.split() if s.isdigit()]
-values_rsc_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
-print (values)
-print (values_rsc_dict)
 
-# Utilisation
-info = (listf[76].rstrip()).replace("|", "")
+# Only for test, TODO extract this information
+bw1 = 8
+bw2 = 24
+bw3 = 32
+
 values = [int(s) for s in info.split() if s.isdigit()]
-values_percente_rsc_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3])
-print (values)
-print (values_percente_rsc_dict)
+values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=bw1)
+
+values2 = [int(s) for s in info2.split() if s.isdigit()]
+values_dict2 = dict(bram=values2[0], dsp=values2[1],ff=values2[2], lut=values2[3], bitwidth=bw2)
+
+values3 = [int(s) for s in info3.split() if s.isdigit()]
+values_dict3 = dict(bram=values3[0], dsp=values3[1],ff=values3[2], lut=values3[3], bitwidth=bw3)
+
 
 ## Plot.
 # Rsc used
-f = plt.bar(range(len(values_dict)), values_dict.values(), align='center')
-plt.xticks(range(len(values_dict)), values_dict.keys())
-plt.plot()
+#f = plt.bar(range(len(all_values)), all_values.values(), align='center')
+#plt.xticks(range(len(all_values)), all_values.keys())
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["bram"], values_dict2["bram"], values_dict3["bram"]],'ro' )
 
-# Rsc Avail
-plt.figure()
-g = plt.bar(range(len(values_rsc_dict)), values_rsc_dict.values(), align='center')
-plt.xticks(range(len(values_rsc_dict)), values_rsc_dict.keys())
-plt.plot()
 
 # Show plots
 plt.show()
-
-
 
 
 # Rsc Utilization %
