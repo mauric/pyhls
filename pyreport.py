@@ -3,10 +3,12 @@
 #
 # This script plot all the report information from VIVADO HLS synthesis
 #
+# This script has been written in Python3 
+#
 
 ## import re # Support for regular expression (RE)
 import matplotlib.pyplot as plt
-
+import sys
 
 titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"} 
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
@@ -15,18 +17,23 @@ keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
 fields_col = [] # To store all the fields in columns and ranks
 fields_rank = [] #
 
+# Extract argument from command line
+fileName1 = sys.argv[1]
+fileName2 = sys.argv[2]
+fileName3 = sys.argv[3]
+print (fileName1, fileName2, fileName3)
 
-# List file names.
-fileName1 = "file1.rpt" 
-fileName2 = "file2.rpt"
-fileName3 = "file3.rpt"
+# List file names only for test.
+#ffileName1 = "file1.rpt" 
+#ffileName2 = "file2.rpt"
+#ffileName3 = "file3.rpt"
 
 ## Open files.
 f1 = open(fileName1, 'r')
-print f1
 f2 = open(fileName2, 'r')
-print f2
 f3 = open(fileName3, 'r')
+print (f1,f2,f3)
+
 
 # Print a Table of Content of report
 print ("Table of Content")
@@ -44,18 +51,19 @@ listf = f1.readlines()
 listf2 = f2.readlines()
 listf3 = f3.readlines()
 
-## Extract some dummy information to test string methods.
+## Extract some information using line number. 
 # Total  resources used
 info = (listf[72].rstrip()).replace("|", "")
 info2 = (listf2[72].rstrip()).replace("|", "")
 info3 = (listf3[72].rstrip()).replace("|", "")
 
 
-# Only for test, TODO extract this information
+# Values of bitdwith only for test, TODO extract this information
 bw1 = 8
 bw2 = 24
 bw3 = 32
 
+# Extract values of resources used and stored in a dictionary.
 values = [int(s) for s in info.split() if s.isdigit()]
 values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=bw1)
 
@@ -70,7 +78,12 @@ values_dict3 = dict(bram=values3[0], dsp=values3[1],ff=values3[2], lut=values3[3
 # Rsc used
 #f = plt.bar(range(len(all_values)), all_values.values(), align='center')
 #plt.xticks(range(len(all_values)), all_values.keys())
+
 plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["bram"], values_dict2["bram"], values_dict3["bram"]],'ro' )
+
+
+
+
 
 
 # Show plots
@@ -82,3 +95,4 @@ plt.show()
 ## Close files.
 f1.close()
 f2.close()
+f3.close()
