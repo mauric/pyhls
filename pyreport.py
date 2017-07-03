@@ -4,8 +4,8 @@
 # This script plot all the report information from VIVADO HLS synthesis
 #
 
-import re # Support for regular expression (RE)
-
+## import re # Support for regular expression (RE)
+import matplotlib.pyplot as plt
 
 
 
@@ -64,6 +64,11 @@ values_percente_rsc_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=
 print (values)
 print (values_percente_rsc_dict)
 
+## Plot.
+plt.bar(range(len(values_dict)), values_dict.values(), align='center')
+plt.xticks(range(len(values_dict)), values_dict.keys())
+
+plt.show()
 
 
 ## Close files.
