@@ -59,9 +59,9 @@ info3 = (listf3[72].rstrip()).replace("|", "")
 
 
 # Values of bitdwith only for test, TODO extract this information
-bw1 = 8
+bw1 = 32 
 bw2 = 24
-bw3 = 32
+bw3 = 16 
 
 # Extract values of resources used and stored in a dictionary.
 values = [int(s) for s in info.split() if s.isdigit()]
@@ -77,20 +77,20 @@ values_dict3 = dict(bram=values3[0], dsp=values3[1],ff=values3[2], lut=values3[3
 ## Plot charts.
 plt.figure(1)
 plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["bram"], values_dict2["bram"], values_dict3["bram"]],'ro' )
-plt.xlabel("X label)
-plt.ylabel("Y label)
+plt.xlabel("X label")
+plt.ylabel("Y label")
 
 
 plt.figure(2)
 plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["dsp"], values_dict2["dsp"], values_dict3["dsp"]],'ro' )
-plt.xlabel("X label)
-plt.ylabel("Y label)
+plt.xlabel("X label")
+plt.ylabel("Y label")
 
 
 plt.figure(3)
 plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["ff"], values_dict2["ff"], values_dict3["ff"]],'ro' )
-plt.xlabel("X label)
-plt.ylabel("Y label)
+plt.xlabel("X label")
+plt.ylabel("Y label")
 
 # Show plots
 plt.show()
