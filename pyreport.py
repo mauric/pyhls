@@ -3,12 +3,11 @@
 #
 # This script plot all the report information from VIVADO HLS synthesis
 #
-# This script has been written in Python3 
-#
 
-## import re # Support for regular expression (RE)
+import re # Support for regular expression (RE)
 import matplotlib.pyplot as plt
-import sys
+import pylab
+
 
 titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"} 
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
@@ -17,80 +16,194 @@ keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
 fields_col = [] # To store all the fields in columns and ranks
 fields_rank = [] #
 
-# Extract argument from command line
-fileName1 = sys.argv[1]
-fileName2 = sys.argv[2]
-fileName3 = sys.argv[3]
-print (fileName1, fileName2, fileName3)
-
-# List file names only for test.
-#ffileName1 = "file1.rpt" 
-#ffileName2 = "file2.rpt"
-#ffileName3 = "file3.rpt"
+fileName1 = "4bit.rpt" 
+fileName2 = "6bit.rpt"
+fileName3 = "12bit.rpt"
+fileName4 = "16bit.rpt"
+fileName5 = "24bit.rpt"
+fileName6 = "32bit.rpt"
 
 ## Open files.
 f1 = open(fileName1, 'r')
 f2 = open(fileName2, 'r')
 f3 = open(fileName3, 'r')
-print (f1,f2,f3)
+f4 = open(fileName4, 'r')
+f5 = open(fileName5, 'r')
+f6 = open(fileName6, 'r')
 
+
+
+print (f1)
+print (f2)
+print (f3)
+print (f4)
+print (f5)
+print (f6)
 
 # Print a Table of Content of report
-print ("Table of Content")
-for line in f1:
-    if line.startswith("=========="):
-        print ("Title here")
-    if line.startswith('*'):
-        print ("    Keyword here")
-    if line.startswith('+'):
-        print ("        Subkeyword here")
-
+#print ("Table of Content")
+#for line in f1:
+#    if line.startswith("=========="):
+#        print ("Title here")
+#    if line.startswith('*'):
+#        print ("    Keyword here")
+#    if line.startswith('+'):
+#        print ("        Subkeyword here")
+#
 # Rewind file and store
 f1.seek(0)
-listf = f1.readlines()  
-listf2 = f2.readlines()
-listf3 = f3.readlines()
 
-## Extract some information using line number. 
 # Total  resources used
-info = (listf[72].rstrip()).replace("|", "")
-info2 = (listf2[72].rstrip()).replace("|", "")
-info3 = (listf3[72].rstrip()).replace("|", "")
-
-
-# Values of bitdwith only for test, TODO extract this information
-bw1 = 32 
-bw2 = 24
-bw3 = 16 
-
-# Extract values of resources used and stored in a dictionary.
+listf = f1.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
 values = [int(s) for s in info.split() if s.isdigit()]
-values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=bw1)
+values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4)
+print (values)
+print (values_dict)
 
-values2 = [int(s) for s in info2.split() if s.isdigit()]
-values_dict2 = dict(bram=values2[0], dsp=values2[1],ff=values2[2], lut=values2[3], bitwidth=bw2)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict)
 
-values3 = [int(s) for s in info3.split() if s.isdigit()]
-values_dict3 = dict(bram=values3[0], dsp=values3[1],ff=values3[2], lut=values3[3], bitwidth=bw3)
+# Total  resources used
+listf = f2.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_dict2 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=6)
+print (values)
+print (values_dict2)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict2 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict2)
+
+# Total  resources used
+listf = f3.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_dict3 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=12)
+print (values)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict3 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict3)
 
 
+# Total  resources used
+listf = f4.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_dict4 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=16)
+print (values)
+print (values_dict4)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict4 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict4)
+
+
+# Total  resources used
+listf = f5.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_dict5 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=24)
+print (values)
+print (values_dict5)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict5 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict5)
+
+# Total  resources used
+listf = f6.readlines()  
+info = (listf[76].rstrip()).replace("|", "")
+values = [int(s) for s in info.split() if s.isdigit()]
+values_dict6 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=32)
+print (values)
+print (values_dict6)
+latency=(listf[31].rstrip()).replace("|", "")
+latenval = [int(s) for s in latency.split() if s.isdigit()]
+latenval_dict6 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+print (latenval)
+print (latenval_dict6)
+
+
+    
 ## Plot charts.
 plt.figure(1)
-plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["bram"], values_dict2["bram"], values_dict3["bram"]],'ro' )
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"],
+values_dict3["bitwidth"],values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]],
+[values_dict["bram"], values_dict2["bram"], values_dict3["bram"],
+values_dict4["bram"],values_dict5["bram"],values_dict6["bram"], ],'ro--' )
 plt.xlabel("X label")
 plt.ylabel("Y label")
-
+plt.title("BRAM")
+pylab.savefig('figure1.pdf')
 
 plt.figure(2)
-plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["dsp"], values_dict2["dsp"], values_dict3["dsp"]],'ro' )
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"] ], [values_dict["dsp"],
+values_dict2["dsp"], values_dict3["dsp"],
+values_dict4["dsp"],values_dict5["dsp"],values_dict6["dsp"]],'ro--' )
 plt.xlabel("X label")
 plt.ylabel("Y label")
-
+plt.title("DSP")
+pylab.savefig('figure2.pdf')
 
 plt.figure(3)
-plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"]], [values_dict["ff"], values_dict2["ff"], values_dict3["ff"]],'ro' )
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ], [values_dict["ff"],
+values_dict2["ff"], values_dict3["ff"], values_dict4["ff"],values_dict5["ff"],values_dict6["ff"]
+],'ro--' )
 plt.xlabel("X label")
 plt.ylabel("Y label")
+plt.title("FF")
+pylab.savefig('figure3.pdf')
+
+
+plt.figure(4)
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ], [values_dict["lut"],
+values_dict2["lut"], values_dict3["lut"], values_dict4["lut"],values_dict5["lut"],values_dict6["lut"]
+],'ro--' )
+plt.xlabel("X label")
+plt.ylabel("Y label")
+plt.title("LUT")
+pylab.savefig('figure4.pdf')
+
+
+plt.figure(5)
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
+[latenval_dict["latenmax"],
+latenval_dict2["latenmax"], latenval_dict3["latenmax"],
+latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
+plt.xlabel("X label")
+plt.ylabel("Y label")
+plt.title("LATENCY")
+pylab.savefig('figure5.pdf')
+
+plt.figure(6)
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]],
+[latenval_dict["intermax"],
+latenval_dict2["intermax"], latenval_dict3["intermax"],
+latenval_dict4["intermax"],latenval_dict5["intermax"],latenval_dict6["intermax"]],'ro--' )
+plt.xlabel("X label")
+plt.ylabel("Y label")
+plt.title("INTERVAL")
+#
+pylab.savefig('figure6.pdf')
+
+
+
+
 
 # Show plots
 plt.show()
@@ -98,9 +211,10 @@ plt.show()
 #plt.xticks(range(len(all_values)), all_values.keys())
 
 
-# Rsc Utilization %
-
 ## Close files.
 f1.close()
 f2.close()
 f3.close()
+f4.close()
+f5.close()
+f6.close()
