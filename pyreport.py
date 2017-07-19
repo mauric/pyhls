@@ -23,9 +23,9 @@ fileNames = []
 fileOpen = []
 reg = re.compile('syn')
 words = []
-os.chdir("/udd/mcaceres/.workspaceviv/convhls/scripting_conv")
-data_dir = "/udd/mcaceres/.workspaceviv/convhls/scripting_conv"
-
+#os.chdir("/udd/mcaceres/.workspaceviv/convhls/scripting_conv")
+#data_dir = "/udd/mcaceres/.workspaceviv/convhls/scripting_conv"
+data_dir = "./"
 for root, dirnames, filenames in os.walk(data_dir):
 	for filename in fnmatch.filter(filenames, '*.rpt'):
 		file = os.path.join(root, filename) 
@@ -33,7 +33,9 @@ for root, dirnames, filenames in os.walk(data_dir):
 		if 'report' in words:
 			fileNames.append(file)
 			fileOpen.append(open(file, 'r'))
-
+		elif 'data' in words:
+			fileNames.append(file)
+			fileOpen.append(open(file, 'r'))
     
 pprint(fileNames)
 pprint(fileOpen)
@@ -54,25 +56,28 @@ pprint(fileOpen)
 ### Process Resources information 
 ######################################
 
-
 # Total  resources used
 for file in fileOpen:
 	listf = file.readlines()  
+	
+	for line in f1:
+		if line.startswith("=========="):
+			print ("Title here")
+		if line.startswith('*'):
+			print ("    Keyword here")
+		if line.startswith('+'):
+			print ("        Subkeyword here")
+	
 	## Find differents section and extract information
-	
-	
-	
 	info = (listf[76].rstrip()).replace("|", "")
 
 	values = [int(s) for s in info.split() if s.isdigit()]
 	values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4)
-	print (values)
 	print (values_dict)
 	
 	latency=(listf[31].rstrip()).replace("|", "")
 	latenval = [int(s) for s in latency.split() if s.isdigit()]
 	latenval_dict = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-	print (latenval)
 	print (latenval_dict)
 
 #
