@@ -7,8 +7,11 @@
 import re # Support for regular expression (RE)
 import matplotlib.pyplot as plt
 import pylab
-import glob
 import os
+import fnmatch
+from pprint import pprint
+import re
+
 
 titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"} 
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
@@ -18,15 +21,22 @@ keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
 #project_dir = os.path.dirname(os.path.abspath(__file__)
 fileNames = []
 f = []
+reg = re.compile('syn')
+words = []
 os.chdir("/udd/mcaceres/.workspaceviv/convhls/scripting_conv")
-for file in glob.glob("*.rpt"):
-    fileNames.append(file)
-    print(file)
-    ## Open files.
-    f.append(open(file, 'r')
+data_dir = "/udd/mcaceres/.workspaceviv/convhls/scripting_conv"
 
-print(fileNames)
-print(f)
+for root, dirnames, filenames in os.walk(data_dir):
+	for filename in fnmatch.filter(filenames, '*.rpt'):
+		file = os.path.join(root, filename) 
+		words = file.split('/')
+		if 'report' in words:
+			fileNames.append(file)
+			f.append(open(file, 'r'))
+
+    
+pprint(fileNames)
+pprint(f)
 
 # Print a Table of Content of report
 #print ("Table of Content")
