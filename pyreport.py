@@ -3,6 +3,7 @@
 #
 # This script plot all the report information from VIVADO HLS synthesis
 #
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 import re # Support for regular expression (RE)
 import matplotlib.pyplot as plt
@@ -36,49 +37,95 @@ for root, dirnames, filenames in os.walk(data_dir):
 		elif 'data' in words:
 			fileNames.append(file)
 			fileOpen.append(open(file, 'r'))
-    
+ 
 pprint(fileNames)
 pprint(fileOpen)
 
-# Print a Table of Content of report
-#print ("Table of Content")
-#for line in f1:
-#    if line.startswith("=========="):
-#        print ("Title here")
-#    if line.startswith('*'):
-#        print ("    Keyword here")
-#    if line.startswith('+'):
-#        print ("        Subkeyword here")
+resources = []
+latency = []
+timing = []
+
+for file in fileOpen:
+	listf = file.readlines()
+	info = (listf[76].rstrip()).replace("|", "")
+	values = [int(s) for s in info.split() if s.isdigit()]
+	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=6))
+	pprint (resources)
+	
+	info = (listf[31].rstrip()).replace("|", "")
+	print(info)
+	values = [int(s) for s in info.split() if s.isdigit()]
+	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3]))
+	pprint(latency)
+	
+	info = (((listf[22].rstrip()).replace("|", "")).replace("ap_clk","")).rstrip()
+	print(info)
+	values = re.findall('([\d.]+)', info)
+	print(values)
+	#values  = [float(s) for s in info.split() if s.isdigit()]
+	#print(values)
+	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
+	pprint(timing)
+
+
+#plt.figure()
+#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
+#[latenval_dict["latenmax"],
+#latenval_dict2["latenmax"], latenval_dict3["latenmax"],
+#latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
+#plt.xlabel("X label")
+#plt.ylabel("Y label")
+#plt.title("LATENCY")
+#pylab.savefig('figure5.pdf')
 #
-# Rewind file and store
+#
 
 #######################################
-### Process Resources information 
-######################################
+### Process Resources information Automatically 
+#######################################
+#flag_title = False
+#flag_keyword = False
+#flag_summary = False
+#
+## Total  resources used
+#for file in fileOpen:
+#	listf = file.readlines()  
+#	for line in listf:
+#		if line.startswith("== ") and !flag_title:
+#			print(line)
+#			print ("Title  here---------------------")
+#			# Into the title field 
+#			flag_title = True
+#		elif line.startswith('+ ') and flag_title:
+#			print ("    Keyword here there are a field with information ")
+#			flag_keyword = True
+#			# Extract information from line and store
+#			words = line.split(' ')
+#			print(words[1])
+#			dict_name = words[1]
+#		elif line.startswith ("*") and flag_title:
+#			flag_summary = True
+#			dict_name = "summary"
+#		elif line.startswith('+---') and flag_title and (flag_keyword or flag_summary):
+#			print ("        Subkeyword here")
+#			flag_table = True
+#		elif flag_table = True and line.startswith("|"):
+#			info = (line.rstrip()).replace("|", "") 
+#	## Find differents section and extract information
+#	info = (listf[76].rstrip()).replace("|", "")
+#
+#	values = [int(s) for s in info.split() if s.isdigit()]
+#	values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4)
+#	print (values_dict)
+#	
+#	latency=(listf[31].rstrip()).replace("|", "")
+#	latenval = [int(s) for s in latency.split() if s.isdigit()]
+#	latenval_dict = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
+#	print (latenval_dict)
 
-# Total  resources used
-for file in fileOpen:
-	listf = file.readlines()  
-	
-	for line in f1:
-		if line.startswith("=========="):
-			print ("Title here")
-		if line.startswith('*'):
-			print ("    Keyword here")
-		if line.startswith('+'):
-			print ("        Subkeyword here")
-	
-	## Find differents section and extract information
-	info = (listf[76].rstrip()).replace("|", "")
+###################################
 
-	values = [int(s) for s in info.split() if s.isdigit()]
-	values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4)
-	print (values_dict)
-	
-	latency=(listf[31].rstrip()).replace("|", "")
-	latenval = [int(s) for s in latency.split() if s.isdigit()]
-	latenval_dict = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-	print (latenval_dict)
 
 #
 ## Total  resources used
