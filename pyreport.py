@@ -46,10 +46,11 @@ latency = []
 timing = []
 
 for file in fileOpen:
+	print(file)
 	listf = file.readlines()
 	info = (listf[76].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
-	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=6))
+	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4))
 	pprint (resources)
 	
 	info = (listf[31].rstrip()).replace("|", "")
@@ -62,8 +63,6 @@ for file in fileOpen:
 	print(info)
 	values = re.findall('([\d.]+)', info)
 	print(values)
-	#values  = [float(s) for s in info.split() if s.isdigit()]
-	#print(values)
 	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
 	pprint(timing)
 
@@ -79,7 +78,7 @@ for file in fileOpen:
 #plt.title("LATENCY")
 #pylab.savefig('figure5.pdf')
 #
-#
+
 
 #######################################
 ### Process Resources information Automatically 
