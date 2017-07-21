@@ -46,19 +46,21 @@ latency = []
 timing = []
 
 for file in fileOpen:
-	print(file)
+	# Resources
 	listf = file.readlines()
 	info = (listf[76].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4))
 	pprint (resources)
 	
+    #Latency	
 	info = (listf[31].rstrip()).replace("|", "")
 	print(info)
 	values = [int(s) for s in info.split() if s.isdigit()]
 	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3]))
 	pprint(latency)
 	
+	#Timing
 	info = (((listf[22].rstrip()).replace("|", "")).replace("ap_clk","")).rstrip()
 	print(info)
 	values = re.findall('([\d.]+)', info)
@@ -67,17 +69,17 @@ for file in fileOpen:
 	pprint(timing)
 
 
-#plt.figure()
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
-#[latenval_dict["latenmax"],
-#latenval_dict2["latenmax"], latenval_dict3["latenmax"],
-#latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("LATENCY")
-#pylab.savefig('figure5.pdf')
-#
+plt.figure()
+plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
+values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
+[latenval_dict["latenmax"],
+latenval_dict2["latenmax"], latenval_dict3["latenmax"],
+latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
+plt.xlabel("X label")
+plt.ylabel("Y label")
+plt.title("LATENCY")
+pylab.savefig('figure5.pdf')
+
 
 
 #######################################
