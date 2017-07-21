@@ -76,15 +76,18 @@ bw = []
 bram = []
 ff = []
 lut = []
-data = [bram,ff,lut]
+dsp = []
+data = [dsp,bram,ff,lut]
 
 resources = sorted(resources, key=lambda k: k['bitwidth'])
-
+resources_graph = resources
 for i in range(len(resources)):
 	bw.append(resources[i]["bitwidth"])
 	bram.append(resources[i]["bram"] ) 
 	ff.append(resources[i]["ff"])
 	lut.append(resources[i]["lut"])
+	dsp.append(resources[i]["dsp"])
+	resources_graph[i].pop('bitwidth')
 	
 for i in range(len(data)):
 	plt.figure(i)	
@@ -94,9 +97,14 @@ for i in range(len(data)):
 	plt.title("Title")
 	pylab.savefig('figure5.pdf')
 	
+
+for i in range(len(resources_graph)):
+	plt.figure(len(data)+i)
+	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
+	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
+
 plt.show()
-
-
+#
 #######################################
 ### Process Resources information Automatically 
 #######################################
@@ -109,7 +117,7 @@ plt.show()
 #	listf = file.readlines()  
 #	for line in listf:
 #		if line.startswith("== ") and !flag_title:
-#			print(line)
+#			print(lineour
 #			print ("Title  here---------------------")
 #			# Into the title field 
 #			flag_title = True
