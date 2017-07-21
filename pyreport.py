@@ -44,14 +44,17 @@ pprint(fileOpen)
 resources = []
 latency = []
 timing = []
+file_index = 0
 
 for file in fileOpen:
+	
 	# Resources
 	listf = file.readlines()
 	info = (listf[76].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
-	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4))
+	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]))
 	pprint (resources)
+	file_index = file_index + 1
 	
     #Latency	
 	info = (listf[31].rstrip()).replace("|", "")
@@ -69,17 +72,29 @@ for file in fileOpen:
 	pprint(timing)
 
 
-plt.figure()
-plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
-[latenval_dict["latenmax"],
-latenval_dict2["latenmax"], latenval_dict3["latenmax"],
-latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
-plt.xlabel("X label")
-plt.ylabel("Y label")
-plt.title("LATENCY")
-pylab.savefig('figure5.pdf')
+bw = []
+bram = []
+ff = []
+lut = []
+data = [bram,ff,lut]
 
+resources = sorted(resources, key=lambda k: k['bitwidth'])
+
+for i in range(len(resources)):
+	bw.append(resources[i]["bitwidth"])
+	bram.append(resources[i]["bram"] ) 
+	ff.append(resources[i]["ff"])
+	lut.append(resources[i]["lut"])
+	
+for i in range(len(data)):
+	plt.figure(i)	
+	plt.plot(bw,data[i],'--ro')
+	plt.xlabel("X label")
+	plt.ylabel("Y label")
+	plt.title("Title")
+	pylab.savefig('figure5.pdf')
+	
+plt.show()
 
 
 #######################################
