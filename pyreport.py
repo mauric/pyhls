@@ -111,15 +111,17 @@ timing_values = []
 latency_values = []
 throughput_values = []
 timing_data = [timing_values, latency_values, throughput_values]
-resources = sorted(resources, key=lambda k: k['bitwidth'])
-resources_graph = resources
 
-for i in range(len(resources)):
-	bw.append(resources[i]["bitwidth"])
-	bram.append(resources[i]["bram"]) 
-	ff.append(resources[i]["ff"])
-	lut.append(resources[i]["lut"])
-	dsp.append(resources[i]["dsp"])
+resources_bak = resources
+resources_ls = sorted(resources, key=lambda k: k['bitwidth'])
+resources_graph = resources_ls
+
+for i in range(len(resources_ls)):
+	bw.append(resources_ls[i]["bitwidth"])
+	bram.append(resources_ls[i]["bram"]) 
+	ff.append(resources_ls[i]["ff"])
+	lut.append(resources_ls[i]["lut"])
+	dsp.append(resources_ls[i]["dsp"])
 	resources_graph[i].pop('bitwidth')
 	timing_values.append(timing[i]["estimates"])
 	latency_values.append(latency[i]["latenmax"])
@@ -132,15 +134,15 @@ uff = []
 ulut = []
 udsp = []
 udata = [udsp,ubram,uff,ulut]
-resources_utilization = sorted(resources_utilization, key=lambda k: k['bitwidth'])
-resources_utilization_graph = resources_utilization
+resources_utilization_ls = sorted(resources_utilization, key=lambda k: k['bitwidth'])
+resources_utilization_graph = resources_utilization_ls
 
-for i in range(len(resources_utilization)):
-	ubw.append(resources_utilization[i]["bitwidth"])
-	ubram.append(resources_utilization[i]["bram"] ) 
-	uff.append(resources_utilization[i]["ff"])
-	ulut.append(resources_utilization[i]["lut"])
-	udsp.append(resources_utilization[i]["dsp"])
+for i in range(len(resources_utilization_ls)):
+	ubw.append(resources_utilization_ls[i]["bitwidth"])
+	ubram.append(resources_utilization_ls[i]["bram"] ) 
+	uff.append(resources_utilization_ls[i]["ff"])
+	ulut.append(resources_utilization_ls[i]["lut"])
+	udsp.append(resources_utilization_ls[i]["dsp"])
 	resources_utilization_graph[i].pop('bitwidth')
 
 
@@ -149,6 +151,7 @@ for i in range(len(resources_utilization)):
 ### Plot charts.
 #
 ########################	
+
 #for i in range(len(data)):
 #	plt.figure(i)	
 #	plt.plot(bw,data[i],'--ro')
@@ -166,20 +169,12 @@ for i in range(len(timing_data)):
 	plt.title("Title")
 	pylab.savefig('figure5.pdf')
 
-#figoffset = len(data)+len(timing_data)
-#for i in range(len(udata)):
-#	plt.figure(i+figoffset)	
-#	plt.plot(bw,udata[i],'--ro')
-#	plt.xlabel("X label")
-#	plt.ylabel("Y label")
-#	plt.title("Title")
-#	pylab.savefig('figure5.pdf')
-
 #for i in range(len(resources_graph)):
 #	plt.figure(len(data)+i)
 #	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
 #	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
 
+## Resources Utilization  Plot data
 
 ind = np.arange(len(fileNames))  # the x locations for the groups
 width = 0.10       # the width of the bars
@@ -189,14 +184,11 @@ ax = fig.add_subplot(111)
 
 # Bram data
 rects1 = ax.bar(ind, bram, width, color='r')
-
 # FF data
 rects2 = ax.bar(ind+width, ff, width, color='g')
-
 # LUT data
 rects3 = ax.bar(ind+width*2, lut, width, color='b')
-
-# DSP  data 
+# DSP  data
 rects4 = ax.bar(ind+width*3, dsp, width, color='y')
 
 ax.set_ylabel('Scores')
@@ -204,20 +196,17 @@ ax.set_xticks(ind+width)
 ax.set_xticklabels(bw )
 ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
 
-## Resources Plot data
+## Resources Utilization  Plot data
 
 figg = plt.figure()
 ax = figg.add_subplot(111)
 
 # Bram data
 rects1 = ax.bar(ind, ubram, width, color='r')
-
 # FF data
 rects2 = ax.bar(ind+width, uff, width, color='g')
-
 # LUT data
 rects3 = ax.bar(ind+width*2, ulut, width, color='b')
-
 # DSP  data 
 rects4 = ax.bar(ind+width*3, udsp, width, color='y')
 
@@ -229,6 +218,7 @@ ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','D
 
 plt.show()
 
+print(resources)
 
 #######################################
 ### Process Resources information Automatically 
