@@ -3,7 +3,6 @@
 #
 # This script plot all the report information from VIVADO HLS synthesis
 #
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 import re # Support for regular expression (RE)
 import matplotlib.pyplot as plt
@@ -47,6 +46,7 @@ resources_utilization = []
 timing = []
 file_index = 0
 file_index_x = 0
+
 for file in fileOpen:
 	
 	# Resources
@@ -65,8 +65,7 @@ for file in fileOpen:
 	pprint (resources_utilization)
 	file_index_x = file_index_x + 1
 
-
-        #Latency	
+    #Latency	
 	info = (listf[31].rstrip()).replace("|", "")
 	print(info)
 	values = [int(s) for s in info.split() if s.isdigit()]
@@ -82,23 +81,30 @@ for file in fileOpen:
 	pprint(timing)
 	file.close()
 
+## Vectors to store information in the right order before plot it
 bw = []
 bram = []
 ff = []
 lut = []
 dsp = []
 data = [dsp,bram,ff,lut]
-
+timing_values = []
+latency_values = []
+throughput_values = []
+timing_data = [timing_values, latency_values, throughput_values]
 resources = sorted(resources, key=lambda k: k['bitwidth'])
 resources_graph = resources
+
 for i in range(len(resources)):
 	bw.append(resources[i]["bitwidth"])
-	bram.append(resources[i]["bram"] ) 
+	bram.append(resources[i]["bram"]) 
 	ff.append(resources[i]["ff"])
 	lut.append(resources[i]["lut"])
 	dsp.append(resources[i]["dsp"])
 	resources_graph[i].pop('bitwidth')
-
+	timing_values.append(timing[i]["estimates"])
+	latency_values.append(latency[i]["latenmax"])
+	throughput_values.append(latency[i]["intermax"])
 
 ## Resources Utilization sort data
 ubw = []
@@ -107,9 +113,9 @@ uff = []
 ulut = []
 udsp = []
 udata = [udsp,ubram,uff,ulut]
-
 resources_utilization = sorted(resources_utilization, key=lambda k: k['bitwidth'])
 resources_utilization_graph = resources_utilization
+
 for i in range(len(resources_utilization)):
 	ubw.append(resources_utilization[i]["bitwidth"])
 	ubram.append(resources_utilization[i]["bram"] ) 
@@ -117,8 +123,8 @@ for i in range(len(resources_utilization)):
 	ulut.append(resources_utilization[i]["lut"])
 	udsp.append(resources_utilization[i]["dsp"])
 	resources_utilization_graph[i].pop('bitwidth')
-	
-	
+
+
 ########################
 #
 ### Plot charts.
@@ -131,13 +137,31 @@ for i in range(len(resources_utilization)):
 #	plt.ylabel("Y label")
 #	plt.title("Title")
 #	pylab.savefig('figure5.pdf')
-	
+
+offset = len(data)
+for i in range(len(timing_data)):
+	plt.figure(i+offset)	
+	plt.plot(bw,timing_data[i],'--ro')
+	plt.xlabel("X label")
+	plt.ylabel("Y label")
+	plt.title("Title")
+	pylab.savefig('figure5.pdf')
+
+#figoffset = len(data)+len(timing_data)
+#for i in range(len(udata)):
+#	plt.figure(i+figoffset)	
+#	plt.plot(bw,udata[i],'--ro')
+#	plt.xlabel("X label")
+#	plt.ylabel("Y label")
+#	plt.title("Title")
+#	pylab.savefig('figure5.pdf')
 
 #for i in range(len(resources_graph)):
 #	plt.figure(len(data)+i)
 #	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
 #	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
-	
+
+
 ind = np.arange(len(fileNames))  # the x locations for the groups
 width = 0.10       # the width of the bars
 
