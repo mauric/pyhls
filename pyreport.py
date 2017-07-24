@@ -17,6 +17,13 @@ titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"}
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
 keyworks_sub = {"Register", "Multiplexer", "Expression", "FIFO", "Memory",
                    "DSP48", "Instance"}
+
+########################
+#
+# Open files 
+#
+########################	
+
 ## Find files in my directory
 #project_dir = os.path.dirname(os.path.abspath(__file__)
 fileNames = []
@@ -46,6 +53,12 @@ resources_utilization = []
 timing = []
 file_index = 0
 file_index_x = 0
+
+########################
+#
+# Extract information 
+#
+########################	
 
 for file in fileOpen:
 	
@@ -80,6 +93,12 @@ for file in fileOpen:
 	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
 	pprint(timing)
 	file.close()
+
+########################
+#
+# Store Data in order
+#
+########################	
 
 ## Vectors to store information in the right order before plot it
 bw = []
