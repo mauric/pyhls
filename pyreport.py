@@ -43,9 +43,10 @@ pprint(fileOpen)
 
 resources = []
 latency = []
+resources_utilization = []
 timing = []
 file_index = 0
-
+file_index_x = 0
 for file in fileOpen:
 	
 	# Resources
@@ -55,8 +56,17 @@ for file in fileOpen:
 	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]))
 	pprint (resources)
 	file_index = file_index + 1
-	
-    #Latency	
+
+	# Resources Utilization
+	info = (listf[80].rstrip()).replace("|", "")
+	values = [int(s) for s in info.split() if s.isdigit()]
+	resources_utilization.append(dict(bram=values[0], dsp=values[1],ff=values[2],
+	lut=values[3],bitwidth=[int(s) for s in re.findall(r'\d+',fileNames[file_index_x])][0]))
+	pprint (resources_utilization)
+	file_index_x = file_index_x + 1
+
+
+        #Latency	
 	info = (listf[31].rstrip()).replace("|", "")
 	print(info)
 	values = [int(s) for s in info.split() if s.isdigit()]
@@ -88,10 +98,29 @@ for i in range(len(resources)):
 	lut.append(resources[i]["lut"])
 	dsp.append(resources[i]["dsp"])
 	resources_graph[i].pop('bitwidth')
+
+
+## Resources Utilization sort data
+ubw = []
+ubram = []
+uff = []
+ulut = []
+udsp = []
+udata = [udsp,ubram,uff,ulut]
+
+resources_utilization = sorted(resources_utilization, key=lambda k: k['bitwidth'])
+resources_utilization_graph = resources_utilization
+for i in range(len(resources_utilization)):
+	ubw.append(resources_utilization[i]["bitwidth"])
+	ubram.append(resources_utilization[i]["bram"] ) 
+	uff.append(resources_utilization[i]["ff"])
+	ulut.append(resources_utilization[i]["lut"])
+	udsp.append(resources_utilization[i]["dsp"])
+	resources_utilization_graph[i].pop('bitwidth')
 	
 	
 ########################
-#   
+#
 ### Plot charts.
 #
 ########################	
@@ -116,39 +145,50 @@ width = 0.10       # the width of the bars
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
-# BitWidth = 32 bit
-yvals = [4, 9, 2, 7, 7 ,6]
-rects1 = ax.bar(ind, yvals, width, color='r')
+# Bram data
+rects1 = ax.bar(ind, bram, width, color='r')
 
-# BitWidth = 24 bit
-zvals = [1,2,3,7, 7 ,6]
-rects2 = ax.bar(ind+width, zvals, width, color='g')
+# FF data
+rects2 = ax.bar(ind+width, ff, width, color='g')
 
-# BitWidth = 16 bit
-kvals = [11,12,13,7, 7 ,6]
-rects3 = ax.bar(ind+width*2, kvals, width, color='b')
+# LUT data
+rects3 = ax.bar(ind+width*2, lut, width, color='b')
 
-# BitWidth = 12 bit
-fvals = [11,12,13,7, 7 ,6]
-rects4 = ax.bar(ind+width*3, fvals, width, color='y')
-
-# BitWidth = 8 bit
-tvals = [11,12,13,7, 7 ,6]
-rects5 = ax.bar(ind+width*4, tvals, width, color='c')
-
-# BitWidth = 4 bit
-wvals = [11,12,13,7, 7 ,6]
-rects6 = ax.bar(ind+width*5, wvals, width, color='y')
-
-
-
+# DSP  data 
+rects4 = ax.bar(ind+width*3, dsp, width, color='y')
 
 ax.set_ylabel('Scores')
 ax.set_xticks(ind+width)
-ax.set_xticklabels( ('2011-Jan-4', '2011-Jan-5', '2011-Jan-6') )
-ax.legend( (rects1[0], rects2[0], rects3[0]), ('y', 'z', 'k') )
+ax.set_xticklabels(bw )
+ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
+
+## Resources Plot data
+
+
+figg = plt.figure()
+ax = figg.add_subplot(111)
+
+# Bram data
+rects1 = ax.bar(ind, ubram, width, color='r')
+
+# FF data
+rects2 = ax.bar(ind+width, uff, width, color='g')
+
+# LUT data
+rects3 = ax.bar(ind+width*2, ulut, width, color='b')
+
+# DSP  data 
+rects4 = ax.bar(ind+width*3, udsp, width, color='y')
+
+ax.set_ylabel('Percentage Utilization')
+ax.set_xticks(ind+width)
+ax.set_xticklabels(bw )
+ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
+
 
 plt.show()
+
+
 #######################################
 ### Process Resources information Automatically 
 #######################################
