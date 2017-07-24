@@ -66,8 +66,10 @@ for file in fileOpen:
 	listf = file.readlines()
 	info = (listf[76].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
-	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]))
-	all_bit_width.append([int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]) 
+	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0] 
+	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2],
+	lut=values[3],bitwidth=bitw))
+	if bitw not in all_bit_width: all_bit_width.append(bitw) 
 	pprint (resources)
 	file_index = file_index + 1
 
@@ -83,7 +85,7 @@ for file in fileOpen:
 	info = (listf[31].rstrip()).replace("|", "")
 	print(info)
 	values = [int(s) for s in info.split() if s.isdigit()]
-	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3]))
+	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3],bitwidth=bitw))
 	pprint(latency)
 	
 	#Timing
@@ -91,7 +93,7 @@ for file in fileOpen:
 	print(info)
 	values = re.findall('([\d.]+)', info)
 	print(values)
-	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
+	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2], bitwidth=bitw))
 	pprint(timing)
 	file.close()
 
@@ -100,8 +102,8 @@ for file in fileOpen:
 # Analyse possible solutions 
 #
 ########################	
-timing_test = sorted(timing, key=lambda k: k['target'])
-
+timing_test = sorted(timing, key=lambda k: k['bitwidth'])
+#all_bit_width = reversed(all_bit_width)
 for i in range(len(fileNames)):
 	# possible timing
 	if timing_test[i]['estimates'] < timing[i]['target']:
@@ -119,11 +121,15 @@ for i in range(len(fileNames)):
 		print("Possible solution: enough resources")
 
 ## Optimal solution in terms of timing
-#timing_opt = []
-#for i in range(len(fileNames)):
+timing_opt = []
+for i in all_bit_width:
 	# Test optimal timing
-	
-
+	for solution in timing_test:
+		if i == solution['bitwidth'] and solution['possible'] == 1:
+			tmp_opt = solution['target']
+			if tmp_opt > solution['target']:
+				timing_opt.append(solution)
+			# other criteria
 
 ########################
 #
