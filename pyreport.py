@@ -12,7 +12,7 @@ import os
 import fnmatch
 from pprint import pprint
 import re
-
+import numpy as np
 
 titles = {"Performance Estimates", "Utilisztion Estimates" , "Interface"} 
 keywords = {"Timing", "Latency", "Detail"} # id with '+'
@@ -70,7 +70,7 @@ for file in fileOpen:
 	print(values)
 	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
 	pprint(timing)
-
+	file.close()
 
 bw = []
 bram = []
@@ -89,22 +89,66 @@ for i in range(len(resources)):
 	dsp.append(resources[i]["dsp"])
 	resources_graph[i].pop('bitwidth')
 	
-for i in range(len(data)):
-	plt.figure(i)	
-	plt.plot(bw,data[i],'--ro')
-	plt.xlabel("X label")
-	plt.ylabel("Y label")
-	plt.title("Title")
-	pylab.savefig('figure5.pdf')
+	
+########################
+#   
+### Plot charts.
+#
+########################	
+#for i in range(len(data)):
+#	plt.figure(i)	
+#	plt.plot(bw,data[i],'--ro')
+#	plt.xlabel("X label")
+#	plt.ylabel("Y label")
+#	plt.title("Title")
+#	pylab.savefig('figure5.pdf')
 	
 
-for i in range(len(resources_graph)):
-	plt.figure(len(data)+i)
-	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
-	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
+#for i in range(len(resources_graph)):
+#	plt.figure(len(data)+i)
+#	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
+#	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
+	
+N = 6
+ind = np.arange(N)  # the x locations for the groups
+width = 0.10       # the width of the bars
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+# BitWidth = 32 bit
+yvals = [4, 9, 2, 7, 7 ,6]
+rects1 = ax.bar(ind, yvals, width, color='r')
+
+# BitWidth = 24 bit
+zvals = [1,2,3,7, 7 ,6]
+rects2 = ax.bar(ind+width, zvals, width, color='g')
+
+# BitWidth = 16 bit
+kvals = [11,12,13,7, 7 ,6]
+rects3 = ax.bar(ind+width*2, kvals, width, color='b')
+
+# BitWidth = 12 bit
+fvals = [11,12,13,7, 7 ,6]
+rects4 = ax.bar(ind+width*3, fvals, width, color='y')
+
+# BitWidth = 8 bit
+tvals = [11,12,13,7, 7 ,6]
+rects5 = ax.bar(ind+width*4, tvals, width, color='c')
+
+# BitWidth = 4 bit
+wvals = [11,12,13,7, 7 ,6]
+rects6 = ax.bar(ind+width*5, wvals, width, color='y')
+
+
+
+
+ax.set_ylabel('Scores')
+ax.set_xticks(ind+width)
+ax.set_xticklabels( ('2011-Jan-4', '2011-Jan-5', '2011-Jan-6') )
+ax.legend( (rects1[0], rects2[0], rects3[0]), ('y', 'z', 'k') )
 
 plt.show()
-#
 #######################################
 ### Process Resources information Automatically 
 #######################################
@@ -149,161 +193,3 @@ plt.show()
 #	print (latenval_dict)
 
 ###################################
-
-
-#
-## Total  resources used
-#listf = f2.readlines()  
-#info = (listf[76].rstrip()).replace("|", "")
-#values = [int(s) for s in info.split() if s.isdigit()]
-#values_dict2 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=6)
-#print (values)
-#print (values_dict2)
-#latency=(listf[31].rstrip()).replace("|", "")
-#latenval = [int(s) for s in latency.split() if s.isdigit()]
-#latenval_dict2 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#print (latenval)
-#print (latenval_dict2)
-#
-## Total  resources used
-#listf = f3.readlines()  
-#info = (listf[76].rstrip()).replace("|", "")
-#values = [int(s) for s in info.split() if s.isdigit()]
-#values_dict3 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=12)
-#print (values)
-#latency=(listf[31].rstrip()).replace("|", "")
-#latenval = [int(s) for s in latency.split() if s.isdigit()]
-#latenval_dict3 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#print (latenval)
-#print (latenval_dict3)
-#
-#
-## Total  resources used
-#listf = f4.readlines()  
-#info = (listf[76].rstrip()).replace("|", "")
-#values = [int(s) for s in info.split() if s.isdigit()]
-#values_dict4 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=16)
-#print (values)
-#print (values_dict4)
-#latency=(listf[31].rstrip()).replace("|", "")
-#latenval = [int(s) for s in latency.split() if s.isdigit()]
-#latenval_dict4 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#print (latenval)
-#print (latenval_dict4)
-#
-#
-## Total  resources used
-#listf = f5.readlines()  
-#info = (listf[76].rstrip()).replace("|", "")
-#values = [int(s) for s in info.split() if s.isdigit()]
-#values_dict5 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=24)
-#print (values)
-#print (values_dict5)
-#latency=(listf[31].rstrip()).replace("|", "")
-#latenval = [int(s) for s in latency.split() if s.isdigit()]
-#latenval_dict5 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#print (latenval)
-#print (latenval_dict5)
-#
-## Total  resources used
-#listf = f6.readlines()  
-#info = (listf[76].rstrip()).replace("|", "")
-#values = [int(s) for s in info.split() if s.isdigit()]
-#values_dict6 = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=32)
-#print (values)
-#print (values_dict6)
-#latency=(listf[31].rstrip()).replace("|", "")
-#latenval = [int(s) for s in latency.split() if s.isdigit()]
-#latenval_dict6 = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#print (latenval)
-#print (latenval_dict6)
-#
-
-########################
-#   
-### Plot charts.
-#
-########################
-
-#plt.figure(1)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"],
-#values_dict3["bitwidth"],values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]],
-#[values_dict["bram"], values_dict2["bram"], values_dict3["bram"],
-#values_dict4["bram"],values_dict5["bram"],values_dict6["bram"], ],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("BRAM")
-#pylab.savefig('figure1.pdf')
-#
-#plt.figure(2)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"] ], [values_dict["dsp"],
-#values_dict2["dsp"], values_dict3["dsp"],
-#values_dict4["dsp"],values_dict5["dsp"],values_dict6["dsp"]],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("DSP")
-#pylab.savefig('figure2.pdf')
-#
-#plt.figure(3)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ], [values_dict["ff"],
-#values_dict2["ff"], values_dict3["ff"], values_dict4["ff"],values_dict5["ff"],values_dict6["ff"]
-#],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("FF")
-#pylab.savefig('figure3.pdf')
-#
-#
-#plt.figure(4)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ], [values_dict["lut"],
-#values_dict2["lut"], values_dict3["lut"], values_dict4["lut"],values_dict5["lut"],values_dict6["lut"]
-#],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("LUT")
-#pylab.savefig('figure4.pdf')
-#
-#
-#plt.figure(5)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]  ],
-#[latenval_dict["latenmax"],
-#latenval_dict2["latenmax"], latenval_dict3["latenmax"],
-#latenval_dict4["latenmax"],latenval_dict5["latenmax"],latenval_dict6["latenmax"]],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("LATENCY")
-#pylab.savefig('figure5.pdf')
-#
-#plt.figure(6)
-#plt.plot([ values_dict["bitwidth"],values_dict2["bitwidth"], values_dict3["bitwidth"],
-#values_dict4["bitwidth"],values_dict5["bitwidth"],values_dict6["bitwidth"]],
-#[latenval_dict["intermax"],
-#latenval_dict2["intermax"], latenval_dict3["intermax"],
-#latenval_dict4["intermax"],latenval_dict5["intermax"],latenval_dict6["intermax"]],'ro--' )
-#plt.xlabel("X label")
-#plt.ylabel("Y label")
-#plt.title("INTERVAL")
-##
-#pylab.savefig('figure6.pdf')
-#
-#
-#
-#
-#
-## Show plots
-#plt.show()
-##f = plt.bar(range(len(all_values)), all_values.values(), align='center')
-##plt.xticks(range(len(all_values)), all_values.keys())
-#
-#
-### Close files.
-#f1.close()
-#f2.close()
-#f3.close()
-#f4.close()
-#f5.close()
-#f6.close()
