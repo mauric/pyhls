@@ -53,7 +53,7 @@ resources_utilization = []
 timing = []
 file_index = 0
 file_index_x = 0
-
+all_bit_width = []
 ########################
 #
 # Extract information 
@@ -67,6 +67,7 @@ for file in fileOpen:
 	info = (listf[76].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]))
+	all_bit_width.append([int(s) for s in re.findall(r'\d+',fileNames[file_index])][0]) 
 	pprint (resources)
 	file_index = file_index + 1
 
@@ -93,6 +94,36 @@ for file in fileOpen:
 	timing.append(dict(target=values[0], estimates = values[1], uncertainty = values[2]))
 	pprint(timing)
 	file.close()
+
+########################
+#
+# Analyse possible solutions 
+#
+########################	
+timing_test = sorted(timing, key=lambda k: k['target'])
+
+for i in range(len(fileNames)):
+	# possible timing
+	if timing_test[i]['estimates'] < timing[i]['target']:
+		timing_test[i]['possible'] = 1
+		print("Posible solution")
+	else:
+		timing_test[i]['possible'] = 0
+		print("Solution not possible")
+	# possible resources
+	if any(v > 100 for v in resources_utilization[i].values()):
+		resources_utilization[i]['possible']=0
+		print("Solution impossible: not enough resources")
+	else:
+		resources_utilization[i]['possible'] = 1
+		print("Possible solution: enough resources")
+
+## Optimal solution in terms of timing
+#timing_opt = []
+#for i in range(len(fileNames)):
+	# Test optimal timing
+	
+
 
 ########################
 #
@@ -146,31 +177,14 @@ for i in range(len(resources_utilization_ls)):
 	resources_utilization_graph[i].pop('bitwidth')
 
 
-########################
+###############################
 #
-### Plot charts.
+### Plot charts. Only bars. Only percentage
 #
-########################	
-
-#for i in range(len(data)):
-#	plt.figure(i)	
-#	plt.plot(bw,data[i],'--ro')
-#	plt.xlabel("X label")
-#	plt.ylabel("Y label")
-#	plt.title("Title")
-#	pylab.savefig('figure5.pdf')
-
-offset = len(data)
-for i in range(len(timing_data)):
-	plt.figure(i+offset)	
-	plt.plot(bw,timing_data[i],'--ro')
-	plt.xlabel("X label")
-	plt.ylabel("Y label")
-	plt.title("Title")
-	pylab.savefig('figure5.pdf')
+###############################
 
 #for i in range(len(resources_graph)):
-#	plt.figure(len(data)+i)
+#	plt.figure(i)
 #	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
 #	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
 
