@@ -138,8 +138,7 @@ for i in range(len(resources_utilization)):
 #	f = plt.bar(range(len(resources_graph[i])), resources_graph[i].values(), align='center')
 #	plt.xticks(range(len(resources_graph[i])), resources_graph[i].keys())
 	
-N = 6
-ind = np.arange(N)  # the x locations for the groups
+ind = np.arange(len(fileNames))  # the x locations for the groups
 width = 0.10       # the width of the bars
 
 fig = plt.figure()
@@ -163,7 +162,6 @@ ax.set_xticklabels(bw )
 ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
 
 ## Resources Plot data
-
 
 figg = plt.figure()
 ax = figg.add_subplot(111)
