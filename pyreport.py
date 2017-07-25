@@ -77,9 +77,9 @@ for file in fileOpen:
 	# Resources Utilization
 	info = (listf[80].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
+	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index_x])][0] 
 	resources_utilization.append(dict(bram=values[0], dsp=values[1],ff=values[2],
-	lut=values[3],bitwidth=int([int(s) for s in
-	re.findall(r'\d+',fileNames[file_index_x])][0])))
+	lut=values[3],bitwidth=bitw))
 	pprint (resources_utilization)
 	file_index_x = file_index_x + 1
 
@@ -111,19 +111,17 @@ timing_test = sorted(timing, key=lambda k: k['bitwidth'])
 for i in range(len(fileNames)):
 	if timing_test[i]['estimates'] < timing[i]['target']:
 		print("Posible solution")
+		timing_test[i]['possible'] = 1
 	else:
 		timing_test[i]['possible'] = 0
-		resources_utilization[i]['possible'] = 0
 		print("Solution not possible")
 
 ## Possible resources solutions
 	if any(v > 100 for v in resources_utilization[i].values()):
 		resources_utilization[i]['possible']=0
-		timing_test[i]['possible'] = 0
 		print("Solution impossible: not enough resources")
 	else:
 		resources_utilization[i]['possible'] = 1
-		timing_test[i]['possible'] = 1
 		print("Possible solution: enough resources and timing validate")
 
 #############################
@@ -137,25 +135,28 @@ timing_opt = []
 resources_opt = []
 for bitws in all_bit_width:
 	# Test optimal timing
-	##for solution in timing_test:
-	for solution in range(number_solutions)
+	for solution in range(number_solutions):
 		#TODO add test resources_utilization reources utilzation
-		if bitws == timing_test[solution]['bitwidth'] and  
+		if (bitws == timing_test[solution]['bitwidth'] and
+		timing_test[solution]['possible']== 1 and
+		resources_utilization[solution]['possible'] == 1 and bitws
+		==resources_utilization[solution]['bitwidth']):
+			print("here are a possible solution")
 			tmp_opt = 0
 			print(tmp_opt)
-			if tmp_opt > solution['estimates']:
+			if tmp_opt > timing_test[solution]['estimates']:
 				print("this is a worst solution")
-			elif tmp_opt < solution['estimates']:
+			elif tmp_opt < timing_test[solution]['estimates']:
 				print("optimal solution here")
 				if timing_opt:
-					if solution['bitwidth'] == timing_opt[-1]['bitwidth']:
+					if timing_test[solution]['bitwidth'] == timing_opt[-1]['bitwidth']:
 						print("switch solution")
 						timing_opt.pop()
-					timing_opt.append(solution)
+					timing_opt.append(timing_test[solution])
 				elif not timing_opt:
 					print("add solution")
-					timing_opt.append(solution)
-			elif tmp_opt == solution['estimates']:
+					timing_opt.append(timing_test[solution])
+			elif tmp_opt == timing_test[solution]['estimates']:
 				print("start a timing optimal search") 
 			else: print("there is a criteria not covered")# other criteria
 
@@ -178,7 +179,7 @@ timing_values = []
 latency_values = []
 throughput_values = []
 timing_data = [timing_values, latency_values, throughput_values]
-
+timing_target_values = []
 resources_bak = resources
 resources_ls = sorted(resources, key=lambda k: k['bitwidth'])
 timing_opt = sorted(timing_opt, key=lambda k: k['bitwidth'])
@@ -194,6 +195,7 @@ for i in range(len(resources_ls)):
 	dsp.append(resources_ls[i]["dsp"])
 	resources_graph[i].pop('bitwidth')
 	timing_values.append(timing_test[i]["estimates"])
+	timing_target_values.append(timing_test[i]["target"])
 	latency_values.append(latency[i]["latenmax"])
 	throughput_values.append(latency[i]["intermax"])
 
@@ -238,9 +240,9 @@ for i in range(len(resources_utilization_ls)):
 
 ## Resources Utilization  Plot data
 ind = np.arange(len(fileNames))  # the x locations for the groups
-width = 0.10       # the width of the bars
+width = 0.20       # the width of the bars
 fig = plt.figure()
-ax = fig.add_subplot(111)
+ax = fig.add_subplot(311)
 # Bram data
 rects1 = ax.bar(ind, bram, width, color='r')
 # FF data
@@ -252,11 +254,12 @@ rects4 = ax.bar(ind+width*3, dsp, width, color='y')
 ax.set_ylabel('Scores')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(bw )
+ax.set_title('Resources usage (absolute values)')
 ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
 
 ## Resources Utilization  Plot data
-figg = plt.figure()
-ax = figg.add_subplot(111)
+#figg = plt.figure()
+ax = fig.add_subplot(312)
 # Bram data
 rects1 = ax.bar(ind, ubram, width, color='r')
 # FF data
@@ -267,20 +270,37 @@ rects3 = ax.bar(ind+width*2, ulut, width, color='b')
 rects4 = ax.bar(ind+width*3, udsp, width, color='y')
 ax.set_ylabel('Percentage Utilization')
 ax.set_xticks(ind+width)
+ax.set_title('Resources usage (percentage)')
 ax.set_xticklabels(bw )
 ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
 
+ax = fig.add_subplot(313)
+# Estimates clock
+rects1 = ax.bar(ind, timing_values , width, color='r')
+# Target clock
+rects2 = ax.bar(ind+width, timing_target_values, width, color='b')
+ax.set_ylabel('ns')
+ax.set_title('Clock of all solution')
+ax.set_xticks(ind+width)
+ax.set_xticklabels(bw)
 
-## Possible Timing solution
+
+
+
+
+## All Timing solution
+width = 0.37
 index = np.arange(len(timing_values))
 figt = plt.figure()
 ax = figt.add_subplot(111)
-# Bram data
+# Estimates clock
 rects1 = ax.bar(index, timing_values , width, color='r')
-ax.set_ylabel('Percentage Utilization')
+# Target clock
+rects2 = ax.bar(index+width, timing_target_values, width, color='b')
+ax.set_ylabel('ns')
+ax.set_title('Clock of all solution')
 ax.set_xticks(index+width)
-ax.set_xticklabels(all_bit_width )
-ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
+ax.set_xticklabels(bw)
 
 ## Possible Resources solution 
 
