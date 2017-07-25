@@ -360,47 +360,4 @@ aa.set_xticklabels(pbw)
 plt.show()
 
 
-#######################################
-### Process Resources information Automatically 
-#######################################
-#flag_title = False
-#flag_keyword = False
-#flag_summary = False
-#
-## Total  resources used
-#for file in fileOpen:
-#	listf = file.readlines()  
-#	for line in listf:
-#		if line.startswith("== ") and !flag_title:
-#			print(lineour
-#			print ("Title  here---------------------")
-#			# Into the title field 
-#			flag_title = True
-#		elif line.startswith('+ ') and flag_title:
-#			print ("    Keyword here there are a field with information ")
-#			flag_keyword = True
-#			# Extract information from line and store
-#			words = line.split(' ')
-#			print(words[1])
-#			dict_name = words[1]
-#		elif line.startswith ("*") and flag_title:
-#			flag_summary = True
-#			dict_name = "summary"
-#		elif line.startswith('+---') and flag_title and (flag_keyword or flag_summary):
-#			print ("        Subkeyword here")
-#			flag_table = True
-#		elif flag_table = True and line.startswith("|"):
-#			info = (line.rstrip()).replace("|", "") 
-#	## Find differents section and extract information
-#	info = (listf[76].rstrip()).replace("|", "")
-#
-#	values = [int(s) for s in info.split() if s.isdigit()]
-#	values_dict = dict(bram=values[0], dsp=values[1],ff=values[2], lut=values[3],bitwidth=4)
-#	print (values_dict)
-#	
-#	latency=(listf[31].rstrip()).replace("|", "")
-#	latenval = [int(s) for s in latency.split() if s.isdigit()]
-#	latenval_dict = dict(latenmin=latenval[0],latenmax=latenval[1],intermin=latenval[2],intermax=latenval[3])
-#	print (latenval_dict)
-
-###################################
+## TODO store in a pdf file
