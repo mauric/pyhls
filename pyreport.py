@@ -65,7 +65,7 @@ for file in fileOpen:
 	
 	# Resources
 	listf = file.readlines()
-	info = (listf[76].rstrip()).replace("|", "")
+	info = (listf[63].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0] 
 	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2],
@@ -75,7 +75,7 @@ for file in fileOpen:
 	file_index = file_index + 1
 
 	# Resources Utilization
-	info = (listf[80].rstrip()).replace("|", "")
+	info = (listf[67].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index_x])][0] 
 	resources_utilization.append(dict(bram=values[0], dsp=values[1],ff=values[2],
@@ -302,6 +302,8 @@ ax.set_title('Clock of all solution')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(bw)
 
+# Save2pdf
+pylab.savefig('allsolutions.pdf')
 
 ## All Timing solution
 width = 0.37
@@ -316,6 +318,8 @@ ay.set_ylabel('ns')
 ay.set_title('Clock of all solution')
 ay.set_xticks(index+width)
 ay.set_xticklabels(bw)
+
+pylab.savefig('all_timing.pdf')
 
 ## Possible Resources solution 
 ind = np.arange(len(timing_opt))
@@ -346,7 +350,7 @@ aa.set_title('Clock of all real possible solution')
 aa.set_xticks(ind+width)
 aa.set_xticklabels(pbw)
 
-
+pylab.savefig('all_possible_solutions.pdf')
 
 
 
