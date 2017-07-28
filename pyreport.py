@@ -242,7 +242,6 @@ for i in range(len(resources_utilization_ls)):
 	ulut.append(resources_utilization_ls[i]["lut"])
 	udsp.append(resources_utilization_ls[i]["dsp"])
 	resources_utilization_graph[i].pop('bitwidth')
-	resources_utilization_graph[i].pop('bitwidth')
 
 
 ###############################
