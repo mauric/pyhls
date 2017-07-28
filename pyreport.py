@@ -122,7 +122,6 @@ for i in range(len(fileNames)):
 		print("Solution impossible: not enough resources")
 	else:
 		resources_utilization[i]['possible'] = 1
-		print("Possible solution: enough resources and timing validate")
 
 #############################
 #
@@ -243,6 +242,7 @@ for i in range(len(resources_utilization_ls)):
 	ulut.append(resources_utilization_ls[i]["lut"])
 	udsp.append(resources_utilization_ls[i]["dsp"])
 	resources_utilization_graph[i].pop('bitwidth')
+	resources_utilization_graph[i].pop('bitwidth')
 
 
 ###############################
@@ -269,7 +269,7 @@ rects2 = ax.bar(ind+width, ff, width, color='g')
 rects3 = ax.bar(ind+width*2, lut, width, color='b')
 # DSP  data
 rects4 = ax.bar(ind+width*3, dsp, width, color='y')
-ax.set_ylabel('Scores')
+ax.set_ylabel('Number of elements used')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(bw )
 ax.set_title('Resources usage (absolute values)')
@@ -361,3 +361,4 @@ plt.show()
 
 
 ## TODO store in a pdf file
+
