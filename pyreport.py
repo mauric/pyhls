@@ -60,38 +60,47 @@ all_bit_width = []
 # Extract information 
 #
 ########################	
+# I need to found the correct lines to extract the correct 
+# information.
 
+# Read all the report files in the directory
 for file in fileOpen:
-	
-	# Resources
+
 	listf = file.readlines()
-	info = (listf[63].rstrip()).replace("|", "")
+	for line in listf:
+		if line.startswith("=========="):
+			print ("Title here")
+		if line.startswith('*'):
+			print ("    Keyword here")
+		if line.startswith('+'):
+			print (" Subkeyword here")
+		resources_info_line = listf.index('== Utilization Estimates\n') + 14 #add offsets
+		utilization_info_line = listf.index('== Utilization Estimates\n') + 18
+		latency_info_line = listf.index('+ Latency (clock cycles): \n') + 6
+		timing_info_line = listf.index('+ Timing (ns): \n') + 5
+
+
+	# Resources Total
+	info = (listf[resources_info_line].rstrip()).replace("|", "")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index])][0] 
-	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2],
-	lut=values[3],bitwidth=bitw))
+	resources.append(dict(bram=values[0], dsp=values[1],ff=values[2],lut=values[3],bitwidth=bitw))
 	if bitw not in all_bit_width: all_bit_width.append(bitw) 
 	pprint (resources)
 	file_index = file_index + 1
 
 	# Resources Utilization
-	info = (listf[67].rstrip()).replace("|", "")
+	info = ((listf[utilization_info_line].rstrip()).replace("|", "")).replace("~","")
 	values = [int(s) for s in info.split() if s.isdigit()]
 	bitw =[int(s) for s in re.findall(r'\d+',fileNames[file_index_x])][0] 
 	resources_utilization.append(dict(bram=values[0], dsp=values[1],ff=values[2],
 	lut=values[3],bitwidth=bitw))
 	pprint (resources_utilization)
 	file_index_x = file_index_x + 1
-
-    #Latency	
-	info = (listf[31].rstrip()).replace("|", "")
-	print(info)
-	values = [int(s) for s in info.split() if s.isdigit()]
-	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3],bitwidth=bitw))
-	pprint(latency)
 	
+
 	#Timing
-	info = (((listf[22].rstrip()).replace("|", "")).replace("ap_clk","")).rstrip()
+	info = (((listf[timing_info_line].rstrip()).replace("|", "")).replace("ap_clk","")).rstrip()
 	print(info)
 	values = re.findall('([\d.]+)', info)
 	print(values)
@@ -100,11 +109,20 @@ for file in fileOpen:
 	pprint(timing)
 	file.close()
 
+	#Latency
+	info = (listf[latency_info_line].rstrip()).replace("|", "")
+	print(info)
+	values = [int(s) for s in info.split() if s.isdigit()]
+	latency.append(dict(latenmin=values[0],latenmax=values[1],intermin=values[2],intermax=values[3],bitwidth=bitw))
+	pprint(latency)
+	
+	
 ########################
 #
-# Analyse possible solutions separately  
+# Analyse possible
+# solutions separately  
 #
-########################	
+########################
 timing_test = sorted(timing, key=lambda k: k['bitwidth'])
 
 ## Possible timing solutions
@@ -125,9 +143,10 @@ for i in range(len(fileNames)):
 
 #############################
 #
-# Find possible and optimal solutions 
+# Find possible and 
+# optimal solutions 
 #
-#############################	
+#############################
 
 ## Optimal solution in terms of timing and resources
 timing_opt = []
@@ -259,7 +278,7 @@ for i in range(len(resources_utilization_ls)):
 ind = np.arange(len(fileNames))  # the x locations for the groups
 width = 0.20       # the width of the bars
 fig = plt.figure()
-ax = fig.add_subplot(311)
+ax = fig.add_subplot(411)
 # Bram data
 rects1 = ax.bar(ind, bram, width, color='r')
 # FF data
@@ -276,7 +295,7 @@ ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','D
 
 ## Resources Utilization  Plot data
 #figg = plt.figure()
-ax = fig.add_subplot(312)
+ax = fig.add_subplot(412)
 # Bram data
 rects1 = ax.bar(ind, ubram, width, color='r')
 # FF data
@@ -291,7 +310,8 @@ ax.set_title('Resources usage (percentage)')
 ax.set_xticklabels(bw )
 ax.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
 
-ax = fig.add_subplot(313)
+## Timing
+ax = fig.add_subplot(413)
 # Estimates clock
 rects1 = ax.bar(ind, timing_values , width, color='r')
 # Target clock
@@ -301,63 +321,64 @@ ax.set_title('Clock of all solution')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(bw)
 
+## Latency 
+ax = fig.add_subplot(414)
+rects1 = ax.bar(ind, latency_values, width, color='g')
+ax.set_ylabel('Clock cycles')
+ax.set_title('Latency')
+ax.set_xticklabels(bw)
+
 # Save2pdf
 pylab.savefig('allsolutions.pdf')
 
 ## All Timing solution
-width = 0.37
-index = np.arange(len(timing_values))
-figt = plt.figure()
-ay = figt.add_subplot(111)
-# Estimates clock
-rects1 = ay.bar(index, timing_values , width, color='r')
-# Target clock
-rects2 = ay.bar(index+width, timing_target_values, width, color='b')
-ay.set_ylabel('ns')
-ay.set_title('Clock of all solution')
-ay.set_xticks(index+width)
-ay.set_xticklabels(bw)
-
-pylab.savefig('all_timing.pdf')
+#width = 0.37
+#index = np.arange(len(timing_values))
+#figt = plt.figure()
+#ay = figt.add_subplot(111)
+## Estimates clock
+#rects1 = ay.bar(index, timing_values , width, color='r')
+## Target clock
+#rects2 = ay.bar(index+width, timing_target_values, width, color='b')
+#ay.set_ylabel('ns')
+#ay.set_title('Clock of all solution')
+#ay.set_xticks(index+width)
+#ay.set_xticklabels(bw)
+#
+#pylab.savefig('all_timing.pdf')
 
 ## Possible Resources solution 
-ind = np.arange(len(timing_opt))
-width = 0.18
-figp= plt.figure()
-aa = figp.add_subplot(211)
-# Bram data
-rects1 = aa.bar(ind, pbram, width, color='r')
-# FF data
-rects2 = aa.bar(ind+width, pff, width, color='g')
-# LUT data
-rects3 = aa.bar(ind+width*2, plut, width, color='b')
-# DSP  data 
-rects4 = aa.bar(ind+width*3, pdsp, width, color='y')
-aa.set_ylabel('Percentage Utilization')
-aa.set_xticks(ind+width)
-aa.set_title('Resources usage (percentage) real possible solution')
-aa.set_xticklabels(pbw )
-aa.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
+#ind = np.arange(len(timing_opt))
+#width = 0.18
+#figp= plt.figure()
+#aa = figp.add_subplot(211) # Bram data
+#rects1 = aa.bar(ind, pbram, width, color='r')
+## FF data
+#rects2 = aa.bar(ind+width, pff, width, color='g')
+## LUT data
+#rects3 = aa.bar(ind+width*2, plut, width, color='b')
+## DSP  data 
+#rects4 = aa.bar(ind+width*3, pdsp, width, color='y')
+#aa.set_ylabel('Percentage Utilization')
+#aa.set_xticks(ind+width)
+#aa.set_title('Resources usage (percentage) real possible solution')
+#aa.set_xticklabels(pbw )
+#aa.legend( (rects1[0], rects2[0], rects3[0], rects4[0]), ('BRAM', 'FF', 'LUT','DSP') )
+#
+#aa = figp.add_subplot(212)
 
-aa = figp.add_subplot(212)
-# Estimates clock
-rects1 = aa.bar(ind, timing_possible_values , width, color='r')
-# Target clock #FIXME no data charged for target in possible solution
-rects2 = aa.bar(ind+width, timing_possible_target, width, color='b')
-aa.set_ylabel('ns')
-aa.set_title('Clock of all real possible solution')
-aa.set_xticks(ind+width)
-aa.set_xticklabels(pbw)
-
-pylab.savefig('all_possible_solutions.pdf')
-
-
-
+## Estimates clock
+#rects1 = aa.bar(ind, timing_possible_values , width, color='r')
+## Target clock #FIXME no data charged for target in possible solution
+#rects2 = aa.bar(ind+width, timing_possible_target, width, color='b')
+#aa.set_ylabel('ns')
+#aa.set_title('Clock of all real possible solution')
+#aa.set_xticks(ind+width)
+#aa.set_xticklabels(pbw)
+#
+#pylab.savefig('all_possible_solutions.pdf')
 
 ## Optimal Solution (possible + fast + less resouces consomption)
-
-
-
 
 # Plot everything
 plt.show()
